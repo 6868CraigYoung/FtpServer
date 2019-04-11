@@ -1,0 +1,482 @@
+sdhhaghsiugfsaoijgijosiGJdasdasdasdsadsadsadsadassa
+
+sadasdasdsadas
+
+asdasd
+asdasd
+assdsa
+sadasdas
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
+ file_size = os.stat(abs_path).st_size
+    
+        dataip = self.client_address[0]
+        dataport = self.command0.decode().strip('\r\n')
+        dataport = dataport.replace(' ',',').split(',',6)
+        dataport = int(dataport[5])*16*16+int(dataport[6])
+
+        file_size = os.stat(abs_path).st_size
+        print(file_size)
+        print(STATUS_CODE[151])
+        STATUS_CODE[151] += (filename + ' (' + str(file_size) + ' bytes).\r\n')
+        print(STATUS_CODE[151])
+
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(('222.28.41.223',20))
+            s.connect((dataip,dataport))
+            self.send_response(151)
+            print('file_size = ', file_size)
+            print(abs_path)
+            with open(abs_path, 'rb') as f:
+                for line in f:
+                    s.sendall(line)
+        self.send_response(227)
+        return 1
+
+    def CWD(self, dirname):
+        top_directory = 'D:/workspace/FtpServer/home/root'  # 需要用的话要这里要改一下路径啊
+        if dirname == 'top':  # 返回顶级目录
+            self.mainPath = top_directory
+            return 1
+        elif dirname == '..':  # 返回上一层目录
+            if self.mainPath != top_directory:
+                self.mainPath = os.path.dirname(self.mainPath)
+                return 1
+            else:
+                return 0
+        elif dirname == '.':
+            return 1
+        else:  # else 就是进入某某目录了
+            back = self.mainPath
+            self.mainPath = os.path.join(self.mainPath, dirname).replace('\\', '/')
+            if not os.path.isdir(self.mainPath):
+                self.mainPath = back
+                return 0
+            else:
+                return 1
+    
+    def XMKD(self,dirname):
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+        if not os.path.exists(path):
+            if '/' in dirname:
+                os.makedirs(path)
+            else:
+                os.mkdir(path)
+            res = '257 ' + "\"" + dirname + "\"" + " create.\r\n"
+            self.request.send(res.encode('utf-8'))
+        else:
+            res = 'create directory operation failed.\r\n'
+            self.request.send(res.encode('utf-8'))
+
+    def rm(self, **data):  # 删除命令，嵌套或者单个文件
+        print('rm')
+        dirname = data.get('dirname')
+        path = os.path.join(self.mainPath, dirname).replace('\\', '/')
+
+        if not os.path.exists(path):
+            print('wen jian bu cun zai')
+            self.request.sendall('no'.encode('utf-8'))
+        else:
+            try:
+                shutil.rmtree(path)  # 这个是嵌套删除文件
+            except:
+                os.remove(path)  # 删除单个文件
+            print('delete')
+            self.request.sendall('remove'.encode('utf-8'))
+
+class DataHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        pass
